@@ -1,3 +1,5 @@
+"""Zavislosti pro routery."""
+
 from backend.db import session as sess
 
 async def get_session():

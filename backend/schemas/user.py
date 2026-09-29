@@ -15,12 +15,14 @@ class UserCredsSchema(BaseModel):
 
 
 class UserRegistrationSchema(UserCredsSchema):
+    "zakladni udaje o uzivateli + nutny nickname pro registraci"
     name: str = Field(min_length=3, max_length=50, title="Jmeno",
                       description="3 < name < 50 znaku",
                       examples=["ahooj", "RRRRRRRR"])
 
 
 class UserResponseSchema(BaseModel):
+    "schema obsahuje udaje, ktere se zobrazi v odpovedi na registraci"
     name: str = Field(min_length=3, max_length=50, title="Jmeno",
                       description="3 < name < 50 znaku",
                       examples=["ahooj", "RRRRRRRR"])

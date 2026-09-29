@@ -1,3 +1,5 @@
+"""Configurace dat z .env souboru"""
+
 from dataclasses import dataclass
 from environs import Env
 
@@ -21,7 +23,8 @@ class Config:
 
 def load_config(path: str | None = None):
     env = Env()
-    env.read_env(path)
+    env.read_env(path) # hleda .env v root souboru
+
     return Config(
         postgres=Postgres(
             user=env("POSTGRES_USER"),
@@ -34,4 +37,5 @@ def load_config(path: str | None = None):
                     db=env.int("REDIS_DB"),
                     ),
     )
-config = load_config()
+
+config = load_config() # instance configu, kterou pouzivame vsudy
