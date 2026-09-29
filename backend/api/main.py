@@ -10,7 +10,6 @@ async def lifespan(app: FastAPI):
     await close_db()
 
 app = FastAPI(lifespan=lifespan,
-              title="Tasks Management API",
               description=
               """
 some description""",
