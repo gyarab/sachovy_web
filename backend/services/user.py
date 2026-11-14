@@ -1,4 +1,5 @@
 import uuid
+from sqlalchemy import select, func, or_
 
 from fastapi import HTTPException, Cookie
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -52,3 +53,7 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found")
 
         return user
+
+    async def get_leaderboard(self, current_user_id: uuid.UUID):
+        leaderboard = await self.repo.get_leaderboard(current_user_id)
+        return leaderboard

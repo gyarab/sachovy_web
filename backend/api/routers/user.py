@@ -65,7 +65,7 @@ async def user_logout(response: Response, session_id=Cookie(None)):
     return {"success": True}
 
 @router.get("/current_user", response_model=UserResponseSchema)
-async def get_current_user(session: AsyncSession = Depends(get_session),
+async def me(session: AsyncSession = Depends(get_session),
                            current_user= Depends(get_current_user)):
     service = UserService(session)
     user = await service.get_user_by_id(current_user)
@@ -79,3 +79,9 @@ async def get_user(user_id: UUID, session: AsyncSession = Depends(get_session)):
     service = UserService(session)
     user = await service.get_user_by_id(user_id)
     return user
+
+@router.get("/leaderboard", summary="Ziskani leaderboardu")
+async def get_leaderboard(session: AsyncSession = Depends(get_session), current_user= Depends(get_current_user)):
+    service = UserService(session)
+    leaderboard = await service.get_leaderboard(current_user)
+    return leaderboard
