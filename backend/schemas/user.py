@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import Field
 from pydantic import BaseModel, EmailStr
 
@@ -23,6 +25,8 @@ class UserRegistrationSchema(UserCredsSchema):
 
 class UserResponseSchema(BaseModel):
     "schema obsahuje udaje, ktere se zobrazi v odpovedi"
+    id: UUID = Field(title="ID uzivatele", description="UUID uzivatele", examples=["123e4567-e89b-12d3-a456-426655440000"])
+
     name: str = Field(min_length=3, max_length=50, title="Jmeno",
                       description="3 < name < 50 znaku",
                       examples=["ahooj", "RRRRRRRR"])

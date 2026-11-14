@@ -5,7 +5,7 @@ from fastapi import Response
 from fastapi.params import Cookie, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.api.dependencies import get_session
+from backend.api.dependencies import get_session, get_current_user
 from backend.db.storage import storage
 from backend.schemas.user import UserRegistrationSchema, UserResponseSchema, UserCredsSchema
 from backend.services.user import UserService
@@ -63,6 +63,13 @@ async def user_logout(response: Response, session_id=Cookie(None)):
     await storage.delete(f"session_id:{session_id}")
 
     return {"success": True}
+
+@router.get("/current_user", response_model=UserResponseSchema)
+async def get_current_user(session: AsyncSession = Depends(get_session),
+                           current_user= Depends(get_current_user)):
+    service = UserService(session)
+    user = await service.get_user_by_id(current_user)
+    return user
 
 @router.get("/users/{user_id}",
             summary="Ziskani informaci o uzivateli",
