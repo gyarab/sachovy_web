@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from backend.db.session import connect_db, close_db
 from backend.api.routers.user import router as user_router
 
@@ -15,5 +15,8 @@ app = FastAPI(lifespan=lifespan,
 some description""",
               version="1.0.0")
 
+api_router = APIRouter(prefix="/api/v1")
+
 # pripojeni routeru
-app.include_router(user_router)
+api_router.include_router(user_router)
+app.include_router(api_router)
