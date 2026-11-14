@@ -44,3 +44,11 @@ class UserService:
         await storage.set("session_id:" + session_id, str(user.id), ex=3600) # pridavame session do schranky
 
         return session_id
+
+    async def get_user_by_id(self, user_id: uuid.UUID):
+        user = await self.repo.get_user_by_id(user_id)
+
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return user

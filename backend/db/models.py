@@ -8,6 +8,9 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = "users"
     id: Mapped[uuid.UUID] = mapped_column(PGUUID, primary_key=True, default=uuid.uuid4)
-    email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    hash_password: Mapped[str] = mapped_column(nullable=False)
     name: Mapped[str] = mapped_column(nullable=False)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    ELO: Mapped[int] = mapped_column(default=1000)
+    vyhry: Mapped[int] = mapped_column(default=0)
+    prohry: Mapped[int] = mapped_column(default=0)
+    hash_password: Mapped[str] = mapped_column(nullable=False)

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, HTTPException
 from fastapi import Response
 from fastapi.params import Cookie, Depends
@@ -61,3 +63,12 @@ async def user_logout(response: Response, session_id=Cookie(None)):
     await storage.delete(f"session_id:{session_id}")
 
     return {"success": True}
+
+@router.get("/users/{user_id}",
+            summary="Ziskani informaci o uzivateli",
+            responses={404: {"description": "Uzivatel nenalezen"}},
+            response_model=UserResponseSchema)
+async def get_user(user_id: UUID, session: AsyncSession = Depends(get_session)):
+    service = UserService(session)
+    user = await service.get_user_by_id(user_id)
+    return user

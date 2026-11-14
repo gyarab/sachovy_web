@@ -16,5 +16,9 @@ class UserRepository:
         user = await self.session.execute(select(User).where(User.email == email))
         return user.scalar_one_or_none()
 
+    async def get_user_by_id(self, user_id):
+        user = await self.session.execute(select(User).where(User.id == user_id))
+        return user.scalar_one_or_none()
+
     async def commit(self):
         await self.session.commit()
