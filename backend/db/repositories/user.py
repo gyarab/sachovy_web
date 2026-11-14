@@ -20,9 +20,6 @@ class UserRepository:
         user = await self.session.execute(select(User).where(User.id == user_id))
         return user.scalar_one_or_none()
 
-    async def commit(self):
-        await self.session.commit()
-
     async def get_leaderboard(self, current_user_id: uuid.UUID):
         if isinstance(current_user_id, str):
             current_user_id = uuid.UUID(current_user_id)
@@ -60,3 +57,5 @@ class UserRepository:
             "leaderboard": top_10,
             "current_user": current_user_stats
         }
+    async def commit(self):
+        await self.session.commit()
