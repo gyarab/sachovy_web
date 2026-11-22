@@ -22,10 +22,12 @@ async def get_open_games(session: AsyncSession = Depends(get_session)):
     games = await service.get_open_games()
     return games
 
-@router.get("/{game_id}")
+@router.get("/{game_id}", response_model=GameResponse,)
 async def get_game(game_id: uuid.UUID, current_user = Depends(get_current_user),
                    session: AsyncSession = Depends(get_session)):
-    pass
+    service = GameService(session)
+    game = await service.get_game_by_id(game_id)
+    return game
 
 @router.post("/{game_id}/join")
 async def join_game(game_id: uuid.UUID,current_user = Depends(get_current_user),

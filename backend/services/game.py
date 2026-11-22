@@ -23,3 +23,7 @@ class GameService:
     async def get_open_games(self):
         games = await self.repo.get_open_games()
         return games
+
+    async def get_game_by_id(self, game_id: uuid.UUID):
+        game = await self.repo.get_game_by_id(game_id)
+        return game

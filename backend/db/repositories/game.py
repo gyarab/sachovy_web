@@ -48,5 +48,12 @@ class GameRepository:
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
+    async def get_game_by_id(self, game_id: uuid.UUID):
+        stmt = (select(Game).options(joinedload(Game.player_1),
+                                     joinedload(Game.player_2),
+                                     joinedload(Game.winner)).where(Game.id == game_id))
+        game = await self.session.execute(stmt)
+        return game.scalar_one_or_none()
+
     async def comit(self):
         await self.session.commit()
