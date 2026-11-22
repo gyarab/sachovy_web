@@ -7,7 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.api.dependencies import get_session, get_current_user
 from backend.db.storage import storage
+from backend.schemas.game import GameResponse
 from backend.schemas.user import UserRegistrationSchema, UserResponseSchema, UserCredsSchema
+from backend.services.game import GameService
 from backend.services.user import UserService
 
 router = APIRouter(prefix="/users",tags=["User"])
@@ -81,7 +83,13 @@ async def get_user(user_id: UUID, session: AsyncSession = Depends(get_session)):
     return user
 
 @router.get("/leaderboard", summary="Ziskani leaderboardu")
-async def get_leaderboard(session: AsyncSession = Depends(get_session), current_user= Depends(get_current_user)):
+async def get_leaderboard(session: AsyncSession = Depends(get_session), current_user: UUID= Depends(get_current_user)):
     service = UserService(session)
     leaderboard = await service.get_leaderboard(current_user)
     return leaderboard
+
+@router.get("/games",response_model=list[GameResponse], summary="Ziskani odehranych her uzivatele")
+async def get_user_games(session: AsyncSession = Depends(get_session), current_user: UUID = Depends(get_current_user)):
+    service = GameService(session)
+    games = await service.get_user_games(current_user)
+    return games
