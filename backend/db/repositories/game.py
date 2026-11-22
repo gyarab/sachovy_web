@@ -55,5 +55,11 @@ class GameRepository:
         game = await self.session.execute(stmt)
         return game.scalar_one_or_none()
 
+    async def join_game(self, game: Game, player_2: uuid.UUID):
+        game.player_2_id = player_2
+        game.status = "playing"
+        await self.session.flush()
+        return game
+
     async def comit(self):
         await self.session.commit()

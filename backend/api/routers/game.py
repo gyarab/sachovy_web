@@ -29,10 +29,12 @@ async def get_game(game_id: uuid.UUID, current_user = Depends(get_current_user),
     game = await service.get_game_by_id(game_id)
     return game
 
-@router.post("/{game_id}/join")
+@router.patch("/{game_id}/join")
 async def join_game(game_id: uuid.UUID,current_user = Depends(get_current_user),
                     session: AsyncSession = Depends(get_session)):
-    pass
+    service = GameService(session)
+    await service.join_game(game_id, current_user)
+    return {"Success": True}
 
 @router.post("/{game_id}/resign")
 async def resign_game(game_id: uuid.UUID, current_user = Depends(get_current_user),
