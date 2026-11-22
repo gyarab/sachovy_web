@@ -50,6 +50,7 @@ class Game(Base):
 
     moves: Mapped[Optional[str]] = mapped_column(nullable=True, default=None)
     status: Mapped[game_status] = mapped_column(nullable=False, default="waiting")
+    draw_offered_player: Mapped[PGUUID | None] = mapped_column(PGUUID, default=None, nullable=True)
     result: Mapped[Optional[game_result]] = mapped_column(nullable=True, default=None)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 

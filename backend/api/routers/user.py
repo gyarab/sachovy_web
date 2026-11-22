@@ -88,7 +88,7 @@ async def get_leaderboard(session: AsyncSession = Depends(get_session), current_
     leaderboard = await service.get_leaderboard(current_user)
     return leaderboard
 
-@router.get("/games",response_model=list[GameResponse], summary="Ziskani odehranych her uzivatele")
+@router.get("/games",response_model=list[GameResponse], summary="Ziskani her uzivatele")
 async def get_user_games(session: AsyncSession = Depends(get_session), current_user: UUID = Depends(get_current_user)):
     service = GameService(session)
     games = await service.get_user_games(current_user)

@@ -26,7 +26,7 @@ class GameService:
         games = await self.repo.get_open_games()
         return games
 
-    async def join_game(self, game_id: uuid.UUID, player_2: uuid.UUID):
+    async def join_game(self, game_id: uuid.UUID, player_2):
         game = await self.repo.get_game_by_id(game_id)
 
         if game is None:
@@ -45,3 +45,55 @@ class GameService:
     async def get_game_by_id(self, game_id: uuid.UUID):
         game = await self.repo.get_game_by_id(game_id)
         return game
+
+    async def draw_game(self, game, player_id):
+        if isinstance(game, uuid.UUID):
+            game = await self.repo.get_game_by_id(game)
+        elif not isinstance(game, Game):
+            raise ValueError("Invalid game type")
+
+        if game.draw_offered_player is None:
+            raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="No draw offer was sent")
+
+        if game.status != "playing":
+            raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="Game is not started or already finished")
+
+        if str(game.draw_offered_player) == player_id:
+            raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="You can't accept your own draw offer")
+
+        result = await self.repo.draw_game(game)
+        await self.repo.comit()
+        return result
+
+    async def draw_offer(self, game: Game, player_id):
+        if game.status != "playing":
+            raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="Game is not started or already finished")
+
+        if game.draw_offered_player is not None:
+            if str(game.draw_offered_player) == player_id:
+                raise HTTPException(status_code=HTTP_409_CONFLICT, detail="You already sent draw offer")
+            await self.draw_game(game.id, player_id)
+
+        result = await self.repo.send_draw_offer(game, player_id)
+        await self.repo.comit()
+        return result
+
+    async def draw_cancel(self, game: Game, player_id):
+        if game.status != "playing":
+            raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="Game is not started or already finished")
+        if game.draw_offered_player is None:
+            raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="No draw offer was sent")
+        if str(game.draw_offered_player) != player_id:
+            raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="You can't cancel draw offer")
+        await self.repo.draw_remove(game)
+        await self.repo.comit()
+
+    async def draw_decline(self, game: Game, player_id):
+        if game.status != "playing":
+            raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="Game is not started or already finished")
+        if game.draw_offered_player is None:
+            raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="No draw offer was sent")
+        if str(game.draw_offered_player) == player_id:
+            raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="You can't decline your own draw offer")
+        await self.repo.draw_remove(game)
+        await self.repo.comit()

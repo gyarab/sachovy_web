@@ -25,7 +25,6 @@ class GameRepository:
                 joinedload(Game.winner),
             )
             .where(
-                Game.status == "finished",
                 or_(
                     Game.player_1_id == user_id,
                     Game.player_2_id == user_id,
@@ -58,6 +57,22 @@ class GameRepository:
     async def join_game(self, game: Game, player_2: uuid.UUID):
         game.player_2_id = player_2
         game.status = "playing"
+        await self.session.flush()
+        return game
+
+    async def send_draw_offer(self, game: Game, player_id: uuid.UUID):
+        game.draw_offered_player = player_id
+        await self.session.flush()
+        return game
+
+    async def draw_game(self, game: Game):
+        game.status = "finished"
+        game.result = "draw"
+        await self.session.flush()
+        return game
+
+    async def draw_remove(self, game: Game):
+        game.draw_offered_player = None
         await self.session.flush()
         return game
 

@@ -19,6 +19,7 @@ class GameResponse(BaseModel):
     id: uuid.UUID
     status: game_status
     result: Optional[game_result] = None
+    draw_offered_player: Optional[uuid.UUID] = None
     moves: Optional[str] = None
     created_at: datetime
 
