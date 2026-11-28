@@ -4,6 +4,8 @@ cat >> rc << EOF
 a() {
     source \$VNVDIR/bin/activate
 }
+
+alias twcss="npx @tailwindcss/cli"
 EOF
 
 source rc
